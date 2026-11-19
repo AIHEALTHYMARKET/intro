@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>線上說明會</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a1a;--card:#f4f5f7;--pri:#2563eb;--bd:#d9dce1}
+@media(prefers-color-scheme:dark){:root{--bg:#15171a;--fg:#eee;--card:#22262b;--bd:#3a3f46}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,"PingFang TC","Microsoft JhengHei",sans-serif}
+#app{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:22px}h2{font-size:18px;margin-top:28px}
+input,select,textarea,button{font:inherit;width:100%;padding:10px;margin:4px 0 12px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg)}
+textarea{min-height:90px}
+button,.b{background:var(--pri);color:#fff;border:0;cursor:pointer;width:auto;padding:8px 14px;margin:0;border-radius:8px;text-decoration:none;display:inline-block;font-size:15px}
+button.g{background:#888}button:disabled{opacity:.5}
+.card{background:var(--card);padding:12px;border-radius:10px;margin:10px 0}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tag{background:var(--pri);color:#fff;border-radius:12px;padding:1px 8px;font-size:13px}
+small{opacity:.75}
+.fr{display:grid;grid-template-columns:1fr 80px 36px 1fr 40px;gap:4px;align-items:center;margin-bottom:6px}
+.fr input,.fr select{margin:0;padding:6px}
+#box{position:relative;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
+#box iframe,#shield{position:absolute;inset:0;width:100%;height:100%;border:0}
+#shield{z-index:5}
+svg{width:100%;background:var(--card);border-radius:8px}
+li{margin:2px 0}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="config.js"></script>
+</head>
+<body>
+<div id="app">載入中…</div>
+<script>
+const C = window.CONF, BS = 10; // BS = 每個觀看紀錄區間的秒數
+firebase.initializeApp(C.firebase);
+const db = firebase.firestore(), auth = firebase.auth(), FV = firebase.firestore.FieldValue;
+if (C.emailjs.publicKey) emailjs.init({ publicKey: C.emailjs.publicKey });
+
+const $ = s => document.querySelector(s), P = new URLSearchParams(location.search);
+const view = h => $('#app').innerHTML = h;
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const err = e => view(`<h1>出錯了</h1><p>${esc(e.message || e)}</p>`);
+const base = () => location.href.split('?')[0].split('#')[0];
+
+const DEF = {
+  title: '線上說明會', session: '請在後台填寫說明會時段', site: '', cc: '60',
+  fields: JSON.stringify([
+    { key: 'name', label: '姓名', type: 'text', req: 1 },
+    { key: 'phone', label: 'WhatsApp 電話', type: 'tel', req: 1 },
+    { key: 'email', label: 'Email', type: 'email', req: 1 }]),
+  mail_subj: '報名成功：{title}',
+  mail_body: '{name} 您好，\n\n您已成功報名「{title}」！\n時段：{session}\n\n您的專屬觀看鏈接（請勿轉發）：\n{link}\n\n到時見！',
+  wa_welcome: '你好 {name}，我是{leader}，已收到你的報名！說明會觀看鏈接：{link}',
+  wa_0: '你好 {name}，我是{leader}。看到你報名了說明會，但還沒開始看～有什麼我可以先幫你解答的嗎？鏈接：{link}',
+  wa_1: '你好 {name}，我是{leader}。看到你已經看了一小段（{pct}%），想知道你目前的第一印象是什麼呢？可以隨時接著看：{link}',
+  wa_2: '你好 {name}，我是{leader}。你已經看了{pct}%，有哪個部分你最有興趣或有疑問嗎？',
+  wa_3: '你好 {name}，我是{leader}。看到你幾乎看完了說明會（{pct}%）！想聽聽你的想法，方便聊聊嗎？'
+};
+async function getCfg() {
+  const d = await db.doc('config/main').get();
+  return Object.assign({}, DEF, d.exists ? d.data() : {});
+}
+
+// ---------- 工具 ----------
+const mmss = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+const tier = p => p >= 90 ? 3 : p >= 50 ? 2 : p > 0 ? 1 : 0;
+let CFG = {}, REGS = [], LN = {};
+const link = r => (CFG.site || base()) + '?w=' + r.token;
+const fill = (t, r, ln) => String(t || '').replace(/{title}/g, CFG.title).replace(/{session}/g, CFG.session)
+  .replace(/{name}/g, r.name).replace(/{leader}/g, ln || '').replace(/{pct}/g, r.pct).replace(/{link}/g, link(r));
+function wa(phone, txt) {
+  let p = String(phone).replace(/\D/g, '');
+  if (p[0] === '0') p = (CFG.cc || '60') + p.slice(1);
+  return 'https://wa.me/' + p + '?text=' + encodeURIComponent(txt);
+}
+function chart(bins, dur) {
+  const n = Math.max(Math.ceil(dur / BS), 1), set = new Set(bins), W = 600, H = 80; let d = '';
+  for (let i = 0; i < n; i++) {
+    const y = set.has(i) ? 10 : H - 10;
+    d += (i ? ' L' : 'M') + (i / n * W) + ' ' + y + ' L' + ((i + 1) / n * W) + ' ' + y;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}"><path d="${d}" fill="none" stroke="#2563eb" stroke-width="2"/></svg>
+  <small>上線＝有在看　下線＝離線／未看　（0:00 → ${mmss(dur)}）</small>`;
+}
+function narr(bins, dur) {
+  const set = new Set(bins), n = Math.ceil(dur / BS), out = []; let i = 0;
+  while (i < n) {
+    const w = set.has(i); let j = i;
+    while (j < n && set.has(j) === w) j++;
+    out.push(`<li>${mmss(i * BS)} – ${mmss(Math.min(j * BS, dur))}　${w ? '✅ 有在看' : '❌ 離線／未看'}</li>`); i = j;
+  }
+  return '<ul>' + out.join('') + '</ul>';
+}
+function det(token) {
+  const r = REGS.find(x => x.token === token), box = $('#det');
+  const extra = Object.values(r.data || {}).map(v => `<li>${esc(v)}</li>`).join('');
+  box.innerHTML = `<div class="card"><h2>${esc(r.name)} 觀看紀錄</h2><ul>${extra}</ul>
+    <p>總觀看完整度：<b>${r.pct}%</b>（有效觀看 ${mmss(r.bins.length * BS)} / ${mmss(r.dur)}）</p>
+    ${r.dur ? chart(r.bins, r.dur) + '<h3>文字敘述</h3>' + narr(r.bins, r.dur) : '<p>尚未開始觀看</p>'}</div>`;
+  box.scrollIntoView();
+}
+function regRow(r, adm) {
+  const ln = adm ? (LN[r.leader] || '（直接報名）') : LN[''], t = tier(r.pct);
+  return `<div class="card"><b>${esc(r.name)}</b> <span class="tag">${r.pct}%</span>
+    ${adm ? ` <small>發展者：${esc(ln)}</small>` : ''}<br><small>${esc(r.phone)} · ${esc(r.email)}</small>
+    <div class="btns">
+    ${adm ? `<a class="b" target="_blank" href="${wa(r.phone, fill(CFG.wa_welcome, r, ln))}">WhatsApp 通知</a>` : ''}
+    <a class="b" target="_blank" href="${wa(r.phone, fill(CFG['wa_' + t], r, ln))}">WhatsApp 跟進</a>
+    <button class="g" onclick="det('${r.token}')">觀看詳情</button></div></div>`;
+}
+function join(regSnap, watchSnap) {
+  const w = {}; watchSnap.forEach(d => w[d.id] = d.data());
+  const out = [];
+  regSnap.forEach(d => {
+    const r = d.data(), x = w[d.id] || {}, bins = x.bins || [], dur = x.dur || 0;
+    out.push({ token: d.id, ...r, bins, dur, pct: dur ? Math.min(100, Math.round(bins.length * BS / dur * 100)) : 0 });
+  });
+  return out.sort((a, b) => b.ts - a.ts);
+}
+const login = () => auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message));
+const logout = () => auth.signOut().then(() => location.reload());
+function gate(role, run) {
+  auth.onAuthStateChanged(u => {
+    if (!u) return view(`<h1>${role}登入</h1><p>請用 Google 帳號登入。</p><button onclick="login()" style="width:100%">使用 Google 登入</button>`);
+    run(u).catch(err);
+  });
+}
+
+// ---------- 第一步：報名 ----------
+async function register() {
+  CFG = await getCfg(); document.title = CFG.title;
+  const F = JSON.parse(CFG.fields);
+  view(`<h1>${esc(CFG.title)}</h1><p>📅 ${esc(CFG.session)}</p><form id="f">` +
+    F.map(f => `<label>${esc(f.label)}${f.req ? ' *' : ''}</label>` + (f.type === 'select'
+      ? `<select name="${f.key}" ${f.req ? 'required' : ''}><option value="">請選擇</option>${(f.options || '').split(',').map(o => `<option>${esc(o.trim())}</option>`).join('')}</select>`
+      : `<input name="${f.key}" type="${f.type || 'text'}" ${f.req ? 'required' : ''}>`)).join('') +
+    `<button id="sb" style="width:100%">立即報名</button></form>`);
+  $('#f').onsubmit = async e => {
+    e.preventDefault(); $('#sb').disabled = true;
+    const data = {}; F.forEach(x => data[x.key] = e.target.elements[x.key].value.trim());
+    const token = crypto.randomUUID().replace(/-/g, '').slice(0, 20);
+    try {
+      await db.doc('regs/' + token).set({ ts: Date.now(), leader: P.get('ref') || '', name: data.name, phone: data.phone, email: data.email, data });
+      const r = { token, name: data.name, pct: 0 };
+      let mailed = true;
+      try {
+        await emailjs.send(C.emailjs.serviceId, C.emailjs.templateId,
+          { to_email: data.email, name: data.name, subject: fill(CFG.mail_subj, r), message: fill(CFG.mail_body, r) });
+      } catch (x) { mailed = false; }
+      view(`<h1>✅ 報名成功</h1><p>${mailed ? '確認信已寄到您的 Email（含說明會鏈接與時段），若沒收到請查看垃圾郵件匣。' : 'Email 暫時寄送失敗，請保存下方鏈接。'}</p>
+        <div class="card">📅 ${esc(CFG.session)}<br>您的專屬觀看鏈接：<br><a href="${link(r)}" style="word-break:break-all">${link(r)}</a></div>`);
+    } catch (x) { alert(x.message); $('#sb').disabled = false; }
+  };
+}
+
+// ---------- 第二步：看影片 ----------
+async function watch() {
+  const w = P.get('w'), rd = await db.doc('regs/' + w).get();
+  if (!rd.exists) throw Error('鏈接無效');
+  const r = rd.data(), cfg = await getCfg(), vd = await db.doc('config/video').get();
+  const vid = ((vd.exists ? vd.data().url : '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/) || [])[1];
+  if (!vid) throw Error('影片尚未設定');
+  const wd = await db.doc('watch/' + w).get();
+  document.title = cfg.title;
+  view(`<h1>${esc(cfg.title)}</h1><p>${esc(r.name)} 您好，請按下開始觀看。播放期間無法暫停或快轉，可縮小視窗或鎖屏後繼續聆聽。</p>
+    <div id="box"><div id="yt"></div><div id="shield"></div></div><br>
+    <button id="go" disabled style="width:100%">▶ 開始觀看</button><p id="msg"></p>`);
+  let pl, maxT = wd.exists ? (wd.data().max || 0) : 0, ended = false, started = false, tick = 0;
+  const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.append(s);
+  window.onYouTubeIframeAPIReady = () => {
+    pl = new YT.Player('yt', {
+      videoId: vid,
+      playerVars: { controls: 0, disablekb: 1, modestbranding: 1, rel: 0, fs: 0, iv_load_policy: 3, playsinline: 1, start: Math.floor(maxT) },
+      events: {
+        onReady: () => $('#go').disabled = false,
+        onPlaybackRateChange: () => pl.setPlaybackRate(1),
+        onStateChange: e => {
+          if (e.data === 0) { ended = true; beat(true); $('#msg').textContent = '✅ 觀看完畢，謝謝！'; }
+          if (e.data === 2 && !ended && started) pl.playVideo();
+        }
+      }
+    });
+  };
+  const beat = fin => {
+    try {
+      if (!fin && pl.getPlayerState() !== 1) return;          // 沒在播放 = 不記錄 = 離線
+      const dur = Math.round(pl.getDuration()), t = fin ? dur : pl.getCurrentTime();
+      db.doc('watch/' + w).set({ leader: r.leader, dur, last: Date.now(), max: Math.round(maxT),
+        bins: FV.arrayUnion(Math.floor(Math.max(t - 1, 0) / BS)) }, { merge: true }).catch(() => {});
+    } catch (e) {}
+  };
+  $('#go').onclick = () => {
+    started = true; $('#go').style.display = 'none'; pl.playVideo();
+    setInterval(() => {
+      if (!pl || ended) return;
+      const t = pl.getCurrentTime();
+      if (t > maxT + 3) pl.seekTo(maxT, true); else maxT = Math.max(maxT, t);   // 禁止快轉
+      if (pl.getPlaybackRate() !== 1) pl.setPlaybackRate(1);
+      if (pl.getPlayerState() === 2) pl.playVideo();                             // 禁止暫停
+      if (++tick % BS === 0) beat();
+    }, 1000);
+  };
+}
+
+// ---------- 管理員 ----------
+const SPEC = [['video', 'YouTube 影片鏈接（建議設為「不公開」）'], ['site', '本網站完整網址（例：https://xxx.github.io/repo/ ，用於 email 鏈接）'],
+  ['title', '說明會名稱'], ['session', '說明會時段（會寫進 email）'], ['cc', '電話國碼（馬來西亞=60）'],
+  ['mail_subj', 'Email 標題'], ['mail_body', 'Email 內容（可用 {name} {title} {session} {link}）', 1],
+  ['wa_welcome', '管理員 WhatsApp 通知文案', 1], ['wa_0', '跟進文案：完全沒看（0%）', 1], ['wa_1', '跟進文案：看了少部分（1–49%）', 1],
+  ['wa_2', '跟進文案：看了一半以上（50–89%）', 1], ['wa_3', '跟進文案：幾乎看完（90%+）', 1]];
+let S, F;
+function grab() {
+  document.querySelectorAll('[data-k]').forEach(i => S.cfg[i.dataset.k] = i.value);
+  S.cfg.fields = JSON.stringify(F);
+}
+async function admin() {
+  gate('管理員', async u => {
+    if (u.email !== C.admin) return view(`<h1>沒有權限</h1><p>${esc(u.email)} 不是管理員。</p><button onclick="logout()">登出</button>`);
+    const [m, v, ls, rs, ws] = await Promise.all([getCfg(), db.doc('config/video').get(),
+      db.collection('leaders').get(), db.collection('regs').get(), db.collection('watch').get()]);
+    S = { cfg: Object.assign({}, m, { video: v.exists ? v.data().url : '' }), leaders: ls.docs.map(d => ({ id: d.id, ...d.data() })) };
+    CFG = S.cfg; F = JSON.parse(CFG.fields); REGS = join(rs, ws);
+    LN = {}; S.leaders.forEach(l => LN[l.code] = l.name);
+    drawAdmin();
+  });
+}
+function drawAdmin() {
+  view(`<h1>管理員後台</h1>
+  <h2>① 說明會設定</h2>` + SPEC.map(([k, l, ta]) => `<label>${l}</label>` + (ta
+    ? `<textarea data-k="${k}">${esc(S.cfg[k])}</textarea>` : `<input data-k="${k}" value="${esc(S.cfg[k])}">`)).join('') +
+  `<h2>② 報名欄位（姓名／電話／Email 為必備，不可刪）</h2><small>欄位名｜類型｜必填｜下拉選項(逗號分隔)</small>` + F.map((f, i) => `<div class="fr">
+    <input value="${esc(f.label)}" oninput="F[${i}].label=this.value">
+    <select onchange="F[${i}].type=this.value">${['text', 'tel', 'email', 'select'].map(t => `<option ${f.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select>
+    <input type="checkbox" ${f.req ? 'checked' : ''} onchange="F[${i}].req=this.checked?1:0">
+    <input value="${esc(f.options || '')}" oninput="F[${i}].options=this.value">
+    ${i > 2 ? `<button class="g" onclick="grab();F.splice(${i},1);drawAdmin()">✕</button>` : '<span></span>'}</div>`).join('') +
+  `<p><button class="g" onclick="grab();F.push({key:'f'+Date.now(),label:'',type:'text',req:0});drawAdmin()">＋ 新增欄位</button></p>
+  <button onclick="saveCfg()" style="width:100%">💾 儲存全部設定</button>
+  <h2>③ 發展者（需用 Gmail 登入）</h2>
+  <input id="le" placeholder="發展者的 Gmail"><input id="lc" placeholder="代碼（英文數字，成為報名鏈接的一部分）"><input id="ln" placeholder="姓名">
+  <button onclick="addL()">新增發展者</button>` + S.leaders.map(l => `<div class="card"><b>${esc(l.name)}</b>（${esc(l.code)}）${esc(l.id)}<br>
+    <small>報名鏈接：${esc(S.cfg.site || base())}?ref=${esc(l.code)}</small><br>
+    <button class="g" style="margin-top:6px" onclick="delL('${esc(l.id)}')">刪除</button></div>`).join('') +
+  `<small>發展者登入頁：${esc(S.cfg.site || base())}?dev</small>
+  <h2>④ 報名者（${REGS.length}）</h2>` + REGS.map(r => regRow(r, 1)).join('') + '<div id="det"></div><br><button class="g" onclick="logout()">登出</button>');
+}
+async function saveCfg() {
+  grab(); const { video, ...rest } = S.cfg;
+  try { await db.doc('config/main').set(rest); await db.doc('config/video').set({ url: video }); alert('已儲存'); }
+  catch (e) { alert(e.message); }
+}
+async function addL() {
+  grab(); const e = $('#le').value.trim().toLowerCase(), c = $('#lc').value.trim(), n = $('#ln').value.trim();
+  if (!e || !c) return alert('Gmail 與代碼必填');
+  if (S.leaders.some(l => l.code === c)) return alert('代碼已存在');
+  try { await db.doc('leaders/' + e).set({ code: c, name: n }); S.leaders.push({ id: e, code: c, name: n }); LN[c] = n; drawAdmin(); }
+  catch (x) { alert(x.message); }
+}
+async function delL(id) {
+  if (!confirm('確定刪除 ' + id + '？')) return;
+  grab(); await db.doc('leaders/' + id).delete(); S.leaders = S.leaders.filter(l => l.id !== id); drawAdmin();
+}
+
+// ---------- 第三步：發展者跟進 ----------
+async function dev() {
+  gate('發展者', async u => {
+    const ld = await db.doc('leaders/' + u.email.toLowerCase()).get();
+    if (!ld.exists) return view(`<h1>尚未獲得授權</h1><p>${esc(u.email)} 還不是發展者，請聯絡管理員加入。</p><button onclick="logout()">登出</button>`);
+    const L = ld.data();
+    CFG = await getCfg(); LN = { '': L.name };
+    const [rs, ws] = await Promise.all([db.collection('regs').where('leader', '==', L.code).get(),
+      db.collection('watch').where('leader', '==', L.code).get()]);
+    REGS = join(rs, ws);
+    const lk = (CFG.site || base()) + '?ref=' + L.code;
+    view(`<h1>${esc(L.name)} 的跟進後台</h1>
+      <div class="card">你的專屬報名鏈接：<br><b style="word-break:break-all">${esc(lk)}</b>
+      <div class="btns"><button onclick="navigator.clipboard.writeText('${lk}');this.textContent='已複製'">複製</button></div></div>
+      <p>共 ${REGS.length} 人報名，${REGS.filter(r => r.pct >= 90).length} 人幾乎看完。</p>` +
+      REGS.map(r => regRow(r, 0)).join('') + '<div id="det"></div><br><button class="g" onclick="logout()">登出</button>');
+  });
+}
+
+// ---------- 路由 ----------
+(async () => {
+  try {
+    if (!C.firebase.projectId) return view('<h1>尚未設定</h1><p>請先在 config.js 填入 Firebase 資料。</p>');
+    if (P.has('admin')) await admin();
+    else if (P.has('dev')) await dev();
+    else if (P.has('w')) await watch();
+    else if (P.has('ref')) await register();
+    else view('<h1>線上說明會</h1><p>請使用邀請你的朋友提供的專屬鏈接報名。</p>');
+  } catch (e) { err(e); }
+})();
+</script>
+</body>
+</html>
