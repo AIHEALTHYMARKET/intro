@@ -6,7 +6,7 @@ on:
 concurrency:
   group: remind
   cancel-in-progress: false
-  jobs:
+jobs:
   run:
     runs-on: ubuntu-latest
     steps:
