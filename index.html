@@ -3,102 +3,131 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#1f3fb8">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<script>try{document.documentElement.dataset.theme=localStorage.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch(e){}</script>
 <title>線上說明會</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f7fb;--ink:#0e1830;--mut:#5f6a80;--line:#e3e7f0;--pri:#1f3fb8;--pri2:#4468f2;--gold:#b88a2c;--gold2:#e8c473;--card:#fff;--ok:#0f8a5f}
+:root{--bg:#f6f7fb;--bg1:#e8edff;--ink:#0e1830;--mut:#5f6a80;--line:#e3e7f0;--card:#fff;--fld:#fbfcfe;--soft:#f1f4fc;--glass:rgba(255,255,255,.78);
+--pri:#1f3fb8;--pri2:#4468f2;--gold:#b88a2c;--gold2:#e8c473;--ok:#0f8a5f;--goldtxt:#946b12;--red:#c0352b;
+--navy1:#0e1830;--navy2:#26396b;--orb1:#cfdcff;--orb2:#f8e6bd;--sh:rgba(14,24,48,.16);--dot:rgba(31,63,184,.08);
+--tb:#e8eeff;--tg:#dff5ea;--ty:#fbf1d9;--tr:#fde6e3}
+:root[data-theme=dark]{--bg:#0a0f1f;--bg1:#141d3f;--ink:#e8ecf8;--mut:#9ba7c4;--line:#232e50;--card:#121a33;--fld:#0d1429;--soft:#19234a;--glass:rgba(18,26,51,.76);
+--pri:#8ea6ff;--pri2:#6f8bff;--ok:#3ddc97;--goldtxt:#f0cd7e;--red:#ff8f85;--navy1:#3552d9;--navy2:#5876ff;--orb1:rgba(68,104,242,.38);--orb2:rgba(184,138,44,.28);--sh:rgba(0,0,0,.55);--dot:rgba(142,166,255,.1);
+--tb:rgba(111,139,255,.18);--tg:rgba(61,220,151,.14);--ty:rgba(232,196,115,.16);--tr:rgba(255,143,133,.16)}
 *{box-sizing:border-box}
-html{color-scheme:light}
-body{margin:0;color:var(--ink);background:linear-gradient(180deg,#e9eeff 0,#f6f7fb 460px) no-repeat,var(--bg);font:16px/1.7 Inter,"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+html{color-scheme:light}html[data-theme=dark]{color-scheme:dark}
+body{margin:0;color:var(--ink);background:linear-gradient(180deg,var(--bg1) 0,var(--bg) 480px) no-repeat,var(--bg);font:16px/1.7 Inter,"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(232,196,115,.6)}100%{box-shadow:0 0 0 22px rgba(232,196,115,0)}}
-.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.78);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid rgba(227,231,240,.8)}
-.top>div{max-width:1100px;margin:auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(232,196,115,.55)}100%{box-shadow:0 0 0 14px rgba(232,196,115,0)}}
+::-webkit-scrollbar{height:6px;width:6px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.top{position:sticky;top:0;z-index:20;background:var(--glass);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--line)}
+.top>div{max-width:1100px;margin:auto;padding:13px 22px;display:flex;justify-content:space-between;align-items:center}
 .brand{font:700 17px "Noto Serif TC",serif;letter-spacing:.04em}
-.brand i{display:inline-grid;place-items:center;width:26px;height:26px;margin-right:10px;border-radius:8px;font-style:normal;font-size:12px;color:#fff;background:linear-gradient(135deg,var(--gold),var(--gold2))}
-.lnk{background:none;border:1px solid var(--line);border-radius:99px;padding:5px 14px;color:var(--mut);cursor:pointer;font:inherit;font-size:13px}
+.brand i{display:inline-grid;place-items:center;width:27px;height:27px;margin-right:10px;border-radius:9px;font-style:normal;font-size:12px;color:#3d2c05;background:linear-gradient(135deg,#d6a840,#f1d38b);box-shadow:0 4px 10px -3px rgba(184,138,44,.6)}
+.actions{display:flex;gap:8px}
+.lnk{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;color:var(--mut);cursor:pointer;font:inherit;font-size:13px;transition:.18s}
+.lnk:hover{color:var(--ink);border-color:var(--pri2)}
 .wrap{max-width:900px;margin:0 auto;padding:22px 18px 40px}
 .wrap.wide{max-width:1100px}
-.hero{position:relative;overflow:hidden;background:#fff;border:1px solid rgba(255,255,255,.9);border-radius:30px;padding:48px 34px;margin:14px 0 22px;box-shadow:0 1px 0 #fff inset,0 30px 70px -28px rgba(31,63,184,.32),0 4px 16px rgba(14,24,48,.05);animation:up .6s ease both}
-.hero:before{content:"";position:absolute;right:-120px;top:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,#cfdcff 0,rgba(207,220,255,0) 68%)}
-.hero:after{content:"";position:absolute;left:-110px;bottom:-170px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,#f8e6bd 0,rgba(248,230,189,0) 68%)}
+.hero{position:relative;overflow:hidden;background:var(--card);background-image:radial-gradient(var(--dot) 1.2px,transparent 1.2px);background-size:24px 24px;border:1px solid var(--line);border-radius:32px;padding:52px 36px;margin:14px 0 22px;box-shadow:0 34px 70px -30px var(--sh),0 4px 14px rgba(14,24,48,.04);animation:up .6s ease both}
+.hero:before{content:"";position:absolute;right:-130px;top:-150px;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,var(--orb1) 0,transparent 68%)}
+.hero:after{content:"";position:absolute;left:-120px;bottom:-180px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,var(--orb2) 0,transparent 68%)}
 .hero>*{position:relative;z-index:1}
-.hero h1{font:700 clamp(28px,6vw,46px)/1.22 "Noto Serif TC",serif;margin:16px 0 12px;letter-spacing:.01em}
+.hero h1{font:700 clamp(28px,6vw,48px)/1.2 "Noto Serif TC",serif;margin:18px 0 12px;letter-spacing:.01em;background:linear-gradient(120deg,var(--ink) 35%,var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p{color:var(--mut);margin:0 0 8px;max-width:560px;font-size:17px}
-.pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.08em;color:#8a6414;background:linear-gradient(135deg,#fbf2da,#f6e5b8);padding:5px 15px;border-radius:99px;box-shadow:0 2px 8px rgba(184,138,44,.18)}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--goldtxt);background:var(--ty);border:1px solid rgba(184,138,44,.25);padding:5px 15px;border-radius:99px}
 .pill:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold)}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}
-@media(max-width:600px){.steps{grid-template-columns:1fr}.hero{padding:34px 22px}}
-.steps span{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500;background:rgba(255,255,255,.75);border:1px solid var(--line);padding:12px 14px;border-radius:16px;backdrop-filter:blur(6px)}
-.steps b{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;color:#fff;font-size:13px;background:linear-gradient(135deg,var(--pri),var(--pri2))}
-.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px;margin:16px 0;box-shadow:0 12px 34px -16px rgba(14,24,48,.14),0 2px 6px rgba(14,24,48,.03);animation:up .6s ease both}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:32px}
+@media(max-width:600px){.steps{grid-template-columns:1fr}.hero{padding:36px 22px}}
+.steps span{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500;background:var(--glass);border:1px solid var(--line);padding:13px 15px;border-radius:18px;backdrop-filter:blur(8px)}
+.steps b{flex:none;display:grid;place-items:center;width:31px;height:31px;border-radius:50%;color:#fff;font-size:13px;background:linear-gradient(135deg,#1b36a6,#4468f2);box-shadow:0 6px 14px -4px rgba(31,63,184,.6)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:28px;margin:16px 0;box-shadow:0 18px 40px -22px var(--sh),0 2px 6px rgba(14,24,48,.03);animation:up .6s ease both}
 .card h3{margin:0 0 16px;font:700 19px "Noto Serif TC",serif}
 .card h3:before{content:"";display:inline-block;width:4px;height:17px;margin-right:11px;border-radius:3px;vertical-align:-2px;background:linear-gradient(var(--gold),var(--gold2))}
 .center{text-align:center}.muted{color:var(--mut)}
-label{display:block;font-size:13.5px;font-weight:600;margin:16px 0 7px;color:#2b3652}
-input,select,textarea{font:inherit;width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fbfcfe;color:var(--ink);outline:none;transition:.18s}
-input:focus,select:focus,textarea:focus{border-color:var(--pri2);background:#fff;box-shadow:0 0 0 4px rgba(68,104,242,.13)}
-input[readonly]{background:#f0f2f7;color:var(--mut)}
+label{display:block;font-size:13.5px;font-weight:600;margin:16px 0 7px;color:var(--mut)}
+input,select,textarea{font:inherit;width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:14px;background:var(--fld);color:var(--ink);outline:none;transition:.18s}
+input:focus,select:focus,textarea:focus{border-color:var(--pri2);box-shadow:0 0 0 4px rgba(68,104,242,.16)}
+input[readonly]{background:var(--soft);color:var(--mut)}
 textarea{min-height:120px;resize:vertical}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:600;letter-spacing:.02em;color:#fff;background:linear-gradient(135deg,#1b36a6,#4468f2);border:0;border-radius:14px;padding:12px 22px;cursor:pointer;text-decoration:none;box-shadow:0 10px 24px -8px rgba(31,63,184,.55);transition:.2s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 14px 28px -8px rgba(31,63,184,.6)}.btn:active{transform:none}.btn:disabled{opacity:.55;transform:none}
-.btn.lg{padding:16px 32px;font-size:17px;border-radius:16px}.btn.block{width:100%;margin-top:26px}
-.btn.gold{color:#3d2c05;background:linear-gradient(135deg,#d6a840,#f1d38b);box-shadow:0 10px 26px -8px rgba(184,138,44,.7)}
-.btn.ghost{background:#fff;color:var(--pri);border:1.5px solid var(--line);box-shadow:none}
-.btn.danger{background:#fff;color:#c0352b;border:1.5px solid #f3c9c5;box-shadow:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:600;letter-spacing:.02em;color:#fff;background:linear-gradient(135deg,#1b36a6,#4468f2);border:0;border-radius:14px;padding:12px 22px;cursor:pointer;text-decoration:none;box-shadow:0 12px 26px -10px rgba(31,63,184,.7);transition:.2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(31,63,184,.75)}.btn:active{transform:none}.btn:disabled{opacity:.55;transform:none}
+.btn.lg{padding:16px 34px;font-size:17px;border-radius:17px}.btn.block{width:100%;margin-top:26px}
+.btn.gold{color:#3d2c05;background:linear-gradient(135deg,#d6a840,#f4d98f);box-shadow:0 12px 28px -10px rgba(184,138,44,.8)}
+.btn.ghost{background:var(--card);color:var(--pri);border:1.5px solid var(--line);box-shadow:none}
+.btn.danger{background:var(--card);color:var(--red);border:1.5px solid rgba(192,53,43,.3);box-shadow:none}
 .btn.sm{padding:8px 15px;font-size:14px;border-radius:11px;box-shadow:none}
 .btn.wa{background:linear-gradient(135deg,#14975a,#2bc77f);box-shadow:0 8px 18px -8px rgba(20,151,90,.6)}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:600px){.seg{grid-template-columns:1fr}}
-.opt{position:relative;border:1.5px solid var(--line);border-radius:20px;padding:20px 20px 18px;cursor:pointer;background:#fff;transition:.2s}
-.opt:hover{border-color:#b8c6fb;transform:translateY(-2px)}
+.opt{position:relative;border:1.5px solid var(--line);border-radius:22px;padding:22px 20px 20px;cursor:pointer;background:var(--card);transition:.2s}
+.opt:hover{border-color:var(--pri2);transform:translateY(-2px)}
 .opt b{display:block;font-size:17px;margin-bottom:2px}.opt small{color:var(--mut);line-height:1.5;display:block}
-.opt.on{border-color:var(--pri2);background:linear-gradient(180deg,#f4f7ff,#fff);box-shadow:0 12px 28px -14px rgba(68,104,242,.5)}
+.opt.on{border-color:var(--pri2);background:linear-gradient(180deg,var(--soft),var(--card));box-shadow:0 16px 30px -16px rgba(68,104,242,.6)}
 .opt.on:after{content:"✓";position:absolute;right:14px;top:14px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--pri2);color:#fff;font-size:13px}
 .days{display:flex;gap:10px;margin:20px 0 14px;overflow-x:auto;padding-bottom:4px}
-.day{flex:1;min-width:98px;text-align:center;padding:12px 6px;border:1.5px solid var(--line);border-radius:16px;cursor:pointer;background:#fff;font-weight:700;transition:.18s}
+.day{flex:1;min-width:98px;text-align:center;padding:12px 6px;border:1.5px solid var(--line);border-radius:16px;cursor:pointer;background:var(--card);font-weight:700;transition:.18s}
 .day small{display:block;font-weight:400;color:var(--mut)}
-.day.on{background:linear-gradient(135deg,#0e1830,#26396b);color:#fff;border-color:transparent;box-shadow:0 10px 22px -10px rgba(14,24,48,.6)}.day.on small{color:#bcc6e0}
+.day.on{background:linear-gradient(135deg,var(--navy1),var(--navy2));color:#fff;border-color:transparent;box-shadow:0 12px 24px -12px var(--sh)}.day.on small{color:#cfd7ee}
 .hrs{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
-.chip{padding:12px 0;text-align:center;border:1.5px solid var(--line);border-radius:14px;cursor:pointer;font-weight:600;background:#fff;transition:.15s;font-variant-numeric:tabular-nums}
+.chip{padding:12px 0;text-align:center;border:1.5px solid var(--line);border-radius:14px;cursor:pointer;font-weight:600;background:var(--card);transition:.15s;font-variant-numeric:tabular-nums}
 .chip:hover{border-color:var(--pri2);color:var(--pri)}
-.chip.on{background:linear-gradient(135deg,#1b36a6,#4468f2);color:#fff;border-color:transparent;box-shadow:0 8px 18px -8px rgba(31,63,184,.7)}
-.tips{list-style:none;padding:0;margin:24px 0 30px;display:grid;gap:10px;color:#3b465f}
-.tips li{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
-.tips li:before{content:"✓";flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#e1f5ec;color:var(--ok);font-weight:700;font-size:12px;margin-top:2px}
-.tabs{display:flex;gap:6px;overflow-x:auto;margin:16px 0;padding:6px;background:#fff;border:1px solid var(--line);border-radius:99px;width:fit-content;max-width:100%}
+.chip.on{background:linear-gradient(135deg,#1b36a6,#4468f2);color:#fff;border-color:transparent;box-shadow:0 10px 20px -10px rgba(31,63,184,.8)}
+.tips{list-style:none;padding:0;margin:24px 0 30px;display:grid;gap:10px;color:var(--mut)}
+.tips li{display:flex;gap:12px;align-items:flex-start;background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:13px 16px}
+.tips li:before{content:"✓";flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--tg);color:var(--ok);font-weight:700;font-size:12px;margin-top:2px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:16px 0;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:99px;width:fit-content;max-width:100%}
 .tab{font:inherit;font-weight:600;border:0;background:none;color:var(--mut);padding:9px 20px;border-radius:99px;cursor:pointer;white-space:nowrap;transition:.18s}
-.tab.on{background:linear-gradient(135deg,#0e1830,#26396b);color:#fff;box-shadow:0 8px 18px -8px rgba(14,24,48,.6)}
+.tab.on{background:linear-gradient(135deg,var(--navy1),var(--navy2));color:#fff;box-shadow:0 10px 20px -10px var(--sh)}
+.mons{display:flex;gap:8px;overflow-x:auto;margin:14px 0;padding-bottom:6px}
+.mon{flex:none;font:inherit;font-weight:600;border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:9px 16px;border-radius:14px;cursor:pointer;transition:.18s}
+.mon small{margin-left:8px;display:inline-block;min-width:22px;padding:0 6px;border-radius:99px;background:var(--tb);color:var(--pri);font-size:12px;text-align:center}
+.mon.on{background:linear-gradient(135deg,var(--navy1),var(--navy2));color:#fff;border-color:transparent}.mon.on small{background:rgba(255,255,255,.2);color:#fff}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:12px 0 18px}
-.stat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px 10px;text-align:center;box-shadow:0 10px 26px -16px rgba(14,24,48,.18)}
-.stat b{display:block;font:700 32px/1.2 "Noto Serif TC",serif;background:linear-gradient(135deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:20px 10px;text-align:center;box-shadow:0 14px 30px -20px var(--sh);transition:.2s}
+.stat.click{cursor:pointer}.stat.click:hover{transform:translateY(-3px);border-color:var(--pri2)}
+.stat.on{border-color:var(--pri2);box-shadow:0 18px 34px -18px rgba(68,104,242,.7);background:linear-gradient(180deg,var(--soft),var(--card))}
+.stat b{display:block;font:700 34px/1.2 "Noto Serif TC",serif;background:linear-gradient(135deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat.t b{background:linear-gradient(135deg,#d2452f,#f08a3c);-webkit-background-clip:text;background-clip:text}
 .stat small{color:var(--mut)}
-.row{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold2);border-radius:16px;padding:16px 18px;margin:12px 0;box-shadow:0 8px 22px -16px rgba(14,24,48,.2);animation:up .5s ease both}
+.alert{display:flex;gap:10px;align-items:center;background:linear-gradient(135deg,var(--tr),var(--ty));border:1px solid rgba(192,53,43,.25);color:var(--ink);padding:14px 18px;border-radius:18px;margin:10px 0;animation:up .5s ease both}
+.push{display:flex;gap:14px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:18px 22px}
+.row{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold2);border-radius:18px;padding:16px 18px;margin:12px 0;box-shadow:0 12px 28px -20px var(--sh);animation:up .5s ease both;transition:.2s}
+.row:hover{transform:translateY(-2px)}
+.row.todo{border-left-color:#e2603a}
 .row .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:99px;padding:2px 11px;background:#e8eeff;color:var(--pri)}
-.tag.g{background:#dff5ea;color:var(--ok)}.tag.y{background:#fbf1d9;color:#946b12}
+.fu{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.fu small{color:var(--mut)}
+.fu button{font:inherit;font-size:13.5px;font-weight:600;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:5px 14px;cursor:pointer;transition:.15s}
+.fu button:hover{border-color:var(--pri2)}
+.fu button.on{background:linear-gradient(135deg,#1b36a6,#4468f2);color:#fff;border-color:transparent}
+.fu button.x{border-style:dashed;color:var(--mut)}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:99px;padding:2px 11px;background:var(--tb);color:var(--pri)}
+.tag.g{background:var(--tg);color:var(--ok)}.tag.y{background:var(--ty);color:var(--goldtxt)}.tag.r{background:var(--tr);color:var(--red)}
 .fr{display:grid;grid-template-columns:1.3fr 84px 34px 1.3fr 42px;gap:8px;align-items:center;margin-bottom:10px}
 .fr input,.fr select{padding:9px 10px;border-radius:11px}
-#stage{position:relative;aspect-ratio:16/9;background:#000;border-radius:24px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(14,24,48,.55),0 0 0 1px rgba(255,255,255,.6)}
+#stage{position:relative;aspect-ratio:16/9;background:#000;border-radius:26px;overflow:hidden;box-shadow:0 44px 80px -30px var(--sh),0 0 0 1px var(--line)}
 #stage iframe,#stage video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
 #shield{position:absolute;inset:0;z-index:5;background:transparent}
-#kick{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);animation:pulse 1.6s infinite;color:#3d2c05;background:linear-gradient(135deg,#d6a840,#f1d38b)}
-#bar{position:absolute;z-index:9;left:0;right:0;bottom:0;display:flex;gap:14px;align-items:center;padding:26px 18px 12px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:13px;font-variant-numeric:tabular-nums}
+#bar{position:absolute;z-index:9;left:0;right:0;bottom:0;display:flex;gap:12px;align-items:center;padding:28px 18px 12px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.78));font-size:13px;font-variant-numeric:tabular-nums}
 .prog{flex:1;height:5px;border-radius:9px;background:rgba(255,255,255,.28);pointer-events:none;overflow:hidden}
 .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold2),#fff)}
-#fs{width:auto;background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:10px;padding:6px 12px;font-size:18px;cursor:pointer;backdrop-filter:blur(6px)}
+#fs,#mu{width:auto;background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:10px;padding:6px 12px;font-size:18px;cursor:pointer;backdrop-filter:blur(6px)}
+#mu{animation:pulse 1.6s infinite}
 #stage.pfs{position:fixed;inset:0;z-index:999;border-radius:0;aspect-ratio:auto;width:100vw;height:100dvh}
 #stage:fullscreen{border-radius:0;width:100%;height:100%;aspect-ratio:auto}
-svg.ch{width:100%;background:#f7f8fc;border-radius:14px;border:1px solid var(--line)}
-.foot{text-align:center;color:#9aa3b5;font-size:13px;padding:10px 0 34px}
+svg.ch{width:100%;background:var(--soft);border-radius:14px;border:1px solid var(--line)}
+.foot{text-align:center;color:var(--mut);opacity:.7;font-size:13px;padding:10px 0 34px}
 li{margin:3px 0}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="config.js"></script>
 </head>
@@ -106,7 +135,7 @@ li{margin:3px 0}
 <div id="app"><div class="wrap center muted" style="padding-top:80px">載入中…</div></div>
 <script>
 const C = window.CONF, BS = 10;
-firebase.initializeApp(C.firebase);
+firebase.initializeApp(Object.assign({ messagingSenderId: (C.firebase.appId || '').split(':')[1] }, C.firebase));
 const db = firebase.firestore(), auth = firebase.auth(), FV = firebase.firestore.FieldValue;
 if (C.emailjs.publicKey) emailjs.init({ publicKey: C.emailjs.publicKey });
 
@@ -114,10 +143,10 @@ const $ = s => document.querySelector(s), P = new URLSearchParams(location.searc
 const view = h => { $('#app').innerHTML = h; scrollTo(0, 0); };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const base = () => location.href.split('?')[0].split('#')[0];
-let USER = null, ROUTE = null, CFG = {}, REGS = [], LN = {};
+let USER = null, ROUTE = null, CFG = {}, REGS = [], LN = {}, DL = null, REDRAW = () => {}, MON = null, FUF = 'todo';
 
 const DEF = {
-  title: '線上說明會', site: '', cc: '60', tz: 'Asia/Kuala_Lumpur', slot_from: '0', slot_to: '23', media: '',
+  title: '線上說明會', site: '', cc: '60', tz: 'Asia/Kuala_Lumpur', slot_from: '0', slot_to: '23', media: '', vapid: '',
   fields: JSON.stringify([
     { key: 'name', label: '姓名', type: 'text', req: 1 },
     { key: 'phone', label: 'WhatsApp 電話', type: 'tel', req: 1 },
@@ -146,13 +175,17 @@ async function authPage(fn) { ROUTE = fn; await AUTHED; await fn(USER); }
 const login = async () => {
   const pr = new firebase.auth.GoogleAuthProvider();
   try { await auth.signInWithPopup(pr); }
-  catch (e) {
-    if (/popup|operation-not-supported/.test(e.code || '')) auth.signInWithRedirect(pr); else alert(e.message);
-  }
+  catch (e) { if (/popup|operation-not-supported/.test(e.code || '')) auth.signInWithRedirect(pr); else alert(e.message); }
 };
-const logout = () => auth.signOut().then(() => location.reload());
+const logout = () => { try { localStorage.removeItem('role'); } catch (e) {} auth.signOut().then(() => location.replace(base())); };
 const err = e => view(shell(`<div class="card"><h3>出錯了</h3><p class="muted">${esc(e.message || e)}</p></div>`));
-const shell = (h, wide) => `<header class="top"><div><span class="brand"><i>◆</i>${esc(CFG.title)}</span>${USER ? '<button class="lnk" onclick="logout()">登出</button>' : ''}</div></header><main class="wrap${wide ? ' wide' : ''}">${h}</main><div class="foot">© ${esc(CFG.title)}</div>`;
+const thmLbl = () => document.documentElement.dataset.theme === 'dark' ? '☀️ 亮色' : '🌙 暗色';
+function toggleTheme() {
+  const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = t; try { localStorage.theme = t; } catch (e) {}
+  document.querySelectorAll('#thm').forEach(b => b.textContent = thmLbl());
+}
+const shell = (h, wide) => `<header class="top"><div><span class="brand"><i>◆</i>${esc(CFG.title)}</span><span class="actions"><button class="lnk" id="thm" onclick="toggleTheme()">${thmLbl()}</button>${USER ? '<button class="lnk" onclick="logout()">登出</button>' : ''}</span></div></header><main class="wrap${wide ? ' wide' : ''}">${h}</main><div class="foot">© ${esc(CFG.title)}</div>`;
 const mmss = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
 const fmt = ms => new Date(ms).toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
 const tier = p => p >= 90 ? 3 : p >= 50 ? 2 : p > 0 ? 1 : 0;
@@ -170,7 +203,7 @@ function chart(bins, dur) {
     const y = set.has(i) ? 10 : H - 10;
     d += (i ? ' L' : 'M') + (i / n * W) + ' ' + y + ' L' + ((i + 1) / n * W) + ' ' + y;
   }
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}"><path d="${d}" fill="none" stroke="#2747c8" stroke-width="2.5"/></svg>
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}"><path d="${d}" fill="none" stroke="#4468f2" stroke-width="2.5"/></svg>
   <small class="muted">上線＝有在看　下線＝離線／未看　（0:00 → ${mmss(dur)}）</small>`;
 }
 function narr(bins, dur) {
@@ -190,17 +223,6 @@ function det(token) {
     ${r.dur ? chart(r.bins, r.dur) + '<h4>文字敘述</h4>' + narr(r.bins, r.dur) : '<p class="muted">尚未開始觀看</p>'}</div>`;
   box.scrollIntoView({ behavior: 'smooth' });
 }
-function regRow(r, adm) {
-  const ln = adm ? (LN[r.leader] || '（直接報名）') : LN[''], t = tier(r.pct);
-  return `<div class="row"><b>${esc(r.name)}</b> <span class="tag ${r.pct >= 90 ? 'g' : ''}">${r.pct}%</span>
-    <span class="tag y">${r.slot ? '預約 ' + fmt(r.slot) : '馬上觀看'}</span>
-    ${adm ? ` <small class="muted">發展者：${esc(ln)}</small>` : ''}<br><small class="muted">${esc(r.phone)} · ${esc(r.email)}</small>
-    <div class="btns">
-    ${adm ? `<a class="btn wa sm" target="_blank" href="${wa(r.phone, fill(CFG.wa_welcome, r, ln))}">WhatsApp 通知</a>` : ''}
-    <a class="btn wa sm" target="_blank" href="${wa(r.phone, fill(CFG['wa_' + t], r, ln))}">WhatsApp 跟進</a>
-    <button class="btn ghost sm" onclick="det('${r.token}')">觀看詳情</button>
-    ${adm ? `<button class="btn danger sm" onclick="delR('${r.token}')">刪除</button>` : ''}</div></div>`;
-}
 function join(regSnap, watchSnap) {
   const w = {}; watchSnap.forEach(d => w[d.id] = d.data());
   const out = [];
@@ -211,7 +233,72 @@ function join(regSnap, watchSnap) {
   return out.sort((a, b) => b.ts - a.ts);
 }
 const loginCard = (role, desc) => view(shell(`<section class="hero"><span class="pill">${role}</span><h1>請先登入</h1><p>${desc}</p>
-  <p style="margin-top:20px"><button class="btn lg" onclick="login()">使用 Google 登入</button></p></section>`));
+  <p style="margin-top:22px"><button class="btn lg gold" onclick="login()">使用 Google 登入</button></p></section>`));
+
+// ---------- 跟進（每月名單 / 未跟進・已跟進）----------
+const FUL = { joined: '已加入', interest: '想進一步了解', declined: '拒絕' };
+function regRow(r, adm) {
+  const ln = adm ? (LN[r.leader] || '（直接報名）') : LN[''], t = tier(r.pct), todo = !r.fu;
+  return `<div class="row ${todo ? 'todo' : ''}"><b>${esc(r.name)}</b> <span class="tag">${r.pct}%</span>
+    <span class="tag y">${r.slot ? '預約 ' + fmt(r.slot) : '馬上觀看'}</span>
+    ${todo ? '<span class="tag r">⏰ 待跟進</span>' : `<span class="tag g">${FUL[r.fu] || ''}</span>`}
+    ${adm ? ` <small class="muted">發展者：${esc(ln)}</small>` : ''}<br><small class="muted">${esc(r.phone)} · ${esc(r.email)}</small>
+    <div class="btns">
+    ${adm ? `<a class="btn wa sm" target="_blank" href="${wa(r.phone, fill(CFG.wa_welcome, r, ln))}">WhatsApp 通知</a>` : ''}
+    <a class="btn wa sm" target="_blank" href="${wa(r.phone, fill(CFG['wa_' + t], r, ln))}">WhatsApp 跟進</a>
+    <button class="btn ghost sm" onclick="det('${r.token}')">觀看詳情</button>
+    ${adm ? `<button class="btn danger sm" onclick="delR('${r.token}')">刪除</button>` : ''}</div>
+    <div class="fu"><small>跟進結果：</small>${Object.entries(FUL).map(([k, v]) => `<button class="${r.fu === k ? 'on' : ''}" onclick="setFu('${r.token}','${k}')">${v}</button>`).join('')}${r.fu ? `<button class="x" onclick="setFu('${r.token}','')">撤銷</button>` : ''}</div></div>`;
+}
+async function setFu(t, k) {
+  try {
+    await db.doc('regs/' + t).update(k ? { fu: k, fuAt: Date.now() } : { fu: '', fuAt: 0 });
+    REGS.find(x => x.token === t).fu = k; REDRAW();
+  } catch (e) { alert(e.message); }
+}
+const wdate = r => r.slot || r.ts;
+const mk = ms => { const d = new Date(ms); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+const togF = k => { FUF = FUF === k ? '' : k; REDRAW(); };
+function followPanel(adm) {
+  const keys = [...new Set(REGS.map(r => mk(wdate(r))))].sort().reverse();
+  if (!keys.length) return '<div class="card center muted">還沒有報名者</div>';
+  if (!MON || !keys.includes(MON)) MON = keys.includes(mk(Date.now())) ? mk(Date.now()) : keys[0];
+  const inM = REGS.filter(r => mk(wdate(r)) === MON), todo = inM.filter(r => !r.fu), done = inM.filter(r => r.fu);
+  const allTodo = REGS.filter(r => !r.fu).length;
+  const list = FUF === 'todo' ? todo.slice().sort((a, b) => wdate(a) - wdate(b)) : FUF === 'done' ? done : FUF === 'all' ? inM : [];
+  return (allTodo ? `<div class="alert">⏰ <span>共有 <b>${allTodo}</b> 位報名者<b>尚未跟進</b>，請盡快用 WhatsApp 聯絡，避免遺漏。</span></div>` : '') +
+    `<div class="mons">${keys.map(k => `<button class="mon ${k === MON ? 'on' : ''}" onclick="MON='${k}';REDRAW()">${k.replace('-', '年')}月<small>${REGS.filter(r => mk(wdate(r)) === k).length}</small></button>`).join('')}</div>
+    <div class="stats"><div class="stat click ${FUF === 'all' ? 'on' : ''}" onclick="togF('all')"><b>${inM.length}</b><small>本月名單 ▾</small></div>
+    <div class="stat click t ${FUF === 'todo' ? 'on' : ''}" onclick="togF('todo')"><b>${todo.length}</b><small>未跟進 ▾</small></div>
+    <div class="stat click ${FUF === 'done' ? 'on' : ''}" onclick="togF('done')"><b>${done.length}</b><small>已跟進 ▾</small></div></div>` +
+    (list.map(r => regRow(r, adm)).join('') || (FUF ? '<p class="muted center">這個分類目前沒有名單 🎉</p>' : '')) + '<div id="det"></div>';
+}
+
+// ---------- 推播 ----------
+const pushOn = () => { try { return localStorage.pushOn === '1' && Notification.permission === 'granted'; } catch (e) { return false; } };
+const pushCard = role => `<div class="card push"><div><b>🔔 推播提醒</b><br><small class="muted">預約前 10 分鐘、以及有人選擇「馬上觀看」時，立即通知你發 WhatsApp 跟進</small></div>
+  ${pushOn() ? '<span class="tag g">✅ 已開啟</span>' : `<button class="btn sm" onclick="enablePush('${role}')">開啟推播</button>`}</div>`;
+async function savePush(role) {
+  const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js'); await navigator.serviceWorker.ready;
+  const tok = await firebase.messaging().getToken({ vapidKey: CFG.vapid, serviceWorkerRegistration: reg });
+  await db.doc('push/' + tok).set({ email: USER.email, role, code: role === 'admin' ? '' : (DL ? DL.code : ''), ts: Date.now() });
+  try { localStorage.pushOn = '1'; } catch (e) {}
+}
+async function enablePush(role) {
+  try {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) return alert('此瀏覽器不支援推播。iPhone 請先用 Safari「分享 → 加入主畫面」，再從主畫面圖示開啟本頁。');
+    if (!CFG.vapid) return alert('管理員尚未在後台「設定」填入推播 VAPID 公鑰');
+    if (await Notification.requestPermission() !== 'granted') return alert('請允許通知權限');
+    await savePush(role); alert('✅ 推播已開啟'); REDRAW();
+  } catch (e) { alert(e.message); }
+}
+async function initPush(role) {
+  try {
+    if (!('Notification' in window) || Notification.permission !== 'granted' || !CFG.vapid) return;
+    await savePush(role);
+    firebase.messaging().onMessage(p => { const n = p.notification || {}; navigator.serviceWorker.getRegistration().then(r => r && r.showNotification(n.title || '', { body: n.body || '' })); });
+  } catch (e) {}
+}
 
 // ---------- 第一步：報名（Google 登入 + 選時段）----------
 let SEL = { mode: 'now', slot: 0, day: 0 }, SL = [];
@@ -239,13 +326,13 @@ const statusCard = (r, id) => {
   const t = { token: id, name: r.name, pct: 0, slot: r.slot };
   return `<section class="hero"><span class="pill">已報名</span><h1>${esc(r.name)}，你已完成報名</h1>
   <p>${r.slot ? `你預約的時間：<b>${fmt(r.slot)}</b>。開始前我們會以 email 提醒並附上觀看鏈接。` : '你可以隨時進入說明會。'}</p>
-  <p style="margin-top:20px"><a class="btn lg gold" href="${link(t)}">${r.slot ? '改為現在觀看' : '▶ 進入說明會'}</a></p></section>`;
+  <p style="margin-top:22px"><a class="btn lg gold" href="${link(t)}">${r.slot ? '改為現在觀看' : '▶ 進入說明會'}</a></p></section>`;
 };
 async function register() {
   await authPage(async u => {
     if (!u) return view(shell(heroReg() + `<div class="card center"><h3>第 1 步：使用 Google 登入</h3>
       <p class="muted">為了確保通知能寄到你的信箱，報名需要使用 Google 帳號登入。</p>
-      <button class="btn lg" onclick="login()">使用 Google 登入並報名</button></div>`));
+      <button class="btn lg gold" onclick="login()">使用 Google 登入並報名</button></div>`));
     const ex = await db.doc('regs/' + u.uid).get();
     if (ex.exists) return view(shell(statusCard(ex.data(), u.uid)));
     const F = JSON.parse(CFG.fields); SEL = { mode: 'now', slot: 0, day: 0 }; SL = slots();
@@ -254,10 +341,10 @@ async function register() {
       return `<label>${esc(f.label)}${f.req ? ' *' : ''}</label>` + (f.type === 'select'
         ? `<select name="${f.key}" ${f.req ? 'required' : ''}><option value="">請選擇</option>${(f.options || '').split(',').map(o => `<option>${esc(o.trim())}</option>`).join('')}</select>`
         : `<input name="${f.key}" type="${f.type || 'text'}" value="${esc(v)}" ${f.key === 'email' ? 'readonly' : ''} ${f.req ? 'required' : ''}>`);
-    }).join('') + `<h3 style="margin-top:28px">選擇觀看方式</h3><div class="seg">
+    }).join('') + `<h3 style="margin-top:30px">選擇觀看方式</h3><div class="seg">
       <div class="opt on" id="o-now"><b>⚡ 馬上觀看了解</b><small>報名後立即取得說明會鏈接</small></div>
       <div class="opt" id="o-slot"><b>📅 預約時段</b><small>選未來 3 天內的整點，開始前 email 提醒</small></div></div>
-      <div id="slotbox" hidden></div><button class="btn lg block" id="sb">確認報名</button></form>`));
+      <div id="slotbox" hidden></div><button class="btn lg gold block" id="sb">確認報名</button></form>`));
     const setMode = m => { SEL.mode = m; $('#o-now').classList.toggle('on', m === 'now'); $('#o-slot').classList.toggle('on', m === 'slot'); $('#slotbox').hidden = m !== 'slot'; if (m === 'slot') drawSlots(); };
     $('#o-now').onclick = () => setMode('now'); $('#o-slot').onclick = () => setMode('slot');
     $('#f').onsubmit = async e => {
@@ -269,7 +356,7 @@ async function register() {
       const slot = SEL.mode === 'slot' ? SEL.slot : 0;
       try {
         await db.doc('regs/' + u.uid).set({ ts: Date.now(), uid: u.uid, leader: P.get('ref') || '', name: data.name, phone: data.phone,
-          email: u.email, data, mode: SEL.mode, slot, sent: {} });
+          email: u.email, data, mode: SEL.mode, slot, sent: {}, fu: '' });
         const r = { token: u.uid, name: data.name, pct: 0, slot }, now = !slot;
         try {
           await emailjs.send(C.emailjs.serviceId, C.emailjs.templateId, { to_email: u.email, name: data.name,
@@ -277,7 +364,7 @@ async function register() {
         } catch (x) {}
         view(shell(now
           ? `<section class="hero"><span class="pill">報名成功</span><h1>${esc(data.name)}，歡迎！</h1><p>鏈接也已寄到你的 Email。現在就可以進入說明會。</p>
-             <p style="margin-top:20px"><a class="btn lg gold" href="${link(r)}">▶ 進入說明會</a></p></section>`
+             <p style="margin-top:22px"><a class="btn lg gold" href="${link(r)}">▶ 進入說明會</a></p></section>`
           : `<section class="hero"><span class="pill">預約成功</span><h1>${esc(data.name)}，已為你預約</h1><p>預約時間：<b>${fmt(slot)}</b></p>
              <p>確認信已寄到你的 Email。說明會鏈接會在開始前 24 小時、1 小時、5 分鐘以 email 發送給你，請留意信箱（含垃圾郵件匣）。</p></section>`));
       } catch (x) { alert(x.message); $('#sb').disabled = false; }
@@ -305,10 +392,10 @@ async function watch() {
 
   function play() {
     view(shell(`<div id="stage">${media ? `<video id="mv" playsinline webkit-playsinline preload="auto" src="${esc(media)}"></video>` : '<div id="yt"></div>'}
-      <div id="shield"></div><button id="kick" class="btn lg" hidden>▶ 點擊播放</button>
-      <div id="bar"><span id="tm">0:00</span><div class="prog"><i id="pg"></i></div><button id="fs" title="全螢幕">⛶</button></div></div>
+      <div id="shield"></div>
+      <div id="bar"><span id="tm">0:00</span><div class="prog"><i id="pg"></i></div><button id="mu" hidden title="開啟聲音">🔇</button><button id="fs" title="全螢幕">⛶</button></div></div>
       <p id="msg" class="center muted" style="margin-top:14px"></p>`, 1));
-    let E, ended = false, started = false, tick = 0; const t0 = Date.now();
+    let E, ended = false, started = false, tried = false, tick = 0; const t0 = Date.now();
     const beat = fin => {
       try {
         if (!fin && !E.playing()) return;
@@ -317,12 +404,13 @@ async function watch() {
           bins: FV.arrayUnion(Math.floor(Math.max(t - 1, 0) / BS)) }, { merge: true }).catch(() => {});
       } catch (e) {}
     };
-    const end = () => { ended = true; beat(true); $('#msg').textContent = '✅ 觀看完畢，謝謝你！'; $('#kick').hidden = true;
+    const end = () => { ended = true; beat(true); $('#msg').textContent = '✅ 觀看完畢，謝謝你！';
       try { (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document); } catch (e) {} $('#stage').classList.remove('pfs'); };
     if (media) {
       const v = $('#mv');
       E = { play: () => v.play().catch(() => {}), time: () => v.currentTime, dur: () => v.duration || 0, playing: () => !v.paused && !v.ended, busy: () => !v.paused && !v.ended,
-        seek: t => v.currentTime = t, rate: () => v.playbackRate, rate1: () => v.playbackRate = 1 };
+        seek: t => v.currentTime = t, rate: () => v.playbackRate, rate1: () => v.playbackRate = 1,
+        mute: () => v.muted = true, unmute: () => v.muted = false, muted: () => v.muted };
       v.onloadedmetadata = () => { if (maxT > 0 && maxT < v.duration - 3) v.currentTime = maxT; E.play(); };
       v.onended = end; v.onratechange = () => v.playbackRate = 1;
       v.onseeking = () => { if (v.currentTime > maxT + 3) v.currentTime = maxT; };
@@ -331,12 +419,12 @@ async function watch() {
         playerVars: { autoplay: 1, controls: 0, disablekb: 1, modestbranding: 1, rel: 0, fs: 0, iv_load_policy: 3, playsinline: 1, start: Math.floor(maxT) },
         events: {
           onReady: () => { E = { play: () => pl.playVideo(), time: () => pl.getCurrentTime(), dur: () => pl.getDuration(), playing: () => pl.getPlayerState() === 1, busy: () => [1, 3].includes(pl.getPlayerState()),
-            seek: t => pl.seekTo(t, true), rate: () => pl.getPlaybackRate(), rate1: () => pl.setPlaybackRate(1) }; E.play(); },
+            seek: t => pl.seekTo(t, true), rate: () => pl.getPlaybackRate(), rate1: () => pl.setPlaybackRate(1),
+            mute: () => pl.mute(), unmute: () => pl.unMute(), muted: () => pl.isMuted() }; E.play(); },
           onStateChange: e => { if (e.data === 0) end(); }
         } }); };
       if (window.YT && YT.Player) init(); else window.onYouTubeIframeAPIReady = init;
     }
-    // 防止螢幕自動熄滅、鎖屏控制
     let wl; const lock = async () => { try { wl = await navigator.wakeLock.request('screen'); } catch (e) {} }; lock();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { lock(); if (E && !ended) E.play(); } });
     if ('mediaSession' in navigator) {
@@ -344,7 +432,8 @@ async function watch() {
       ['pause', 'seekto', 'seekforward', 'seekbackward', 'previoustrack', 'nexttrack'].forEach(a => { try { navigator.mediaSession.setActionHandler(a, () => {}); } catch (e) {} });
       try { navigator.mediaSession.setActionHandler('play', () => E && E.play()); } catch (e) {}
     }
-    $('#kick').onclick = () => { E && E.play(); };
+    const wake = () => { if (E) { if (E.muted()) E.unmute(); E.play(); } };
+    $('#shield').onclick = wake; $('#mu').onclick = wake;
     $('#fs').onclick = () => {
       const s = $('#stage'), d = document, inFs = d.fullscreenElement || d.webkitFullscreenElement || s.classList.contains('pfs');
       if (inFs) { try { (d.exitFullscreen || d.webkitExitFullscreen || (() => {})).call(d); } catch (e) {} s.classList.remove('pfs'); try { screen.orientation.unlock(); } catch (e) {} return; }
@@ -357,10 +446,11 @@ async function watch() {
       if (!E || ended) return;
       const t = E.time(), d = E.dur();
       if (E.playing()) started = true;
-      if (t > maxT + 3) E.seek(maxT); else maxT = Math.max(maxT, t);          // 禁止快轉
+      if (t > maxT + 3) E.seek(maxT); else maxT = Math.max(maxT, t);
       if (E.rate() !== 1) E.rate1();
-      if (started && !E.busy()) E.play();                                   // 禁止暫停
-      $('#kick').hidden = E.busy() || (Date.now() - t0 < 2500);
+      if (started && !E.busy()) E.play();
+      if (!started && !tried && !E.busy() && Date.now() - t0 > 2200) { tried = true; E.mute(); E.play(); }
+      $('#mu').hidden = !E.muted();
       $('#tm').textContent = mmss(t) + (d ? ' / ' + mmss(d) : ''); $('#pg').style.width = d ? (t / d * 100) + '%' : '0';
       if (++tick % BS === 0) beat();
     }, 1000);
@@ -370,6 +460,7 @@ async function watch() {
 // ---------- 管理員 ----------
 const G = {
   set: [['video', 'YouTube 影片鏈接（建議設為「不公開」）'], ['media', '備用播放檔直連網址（mp4／mp3，選填。填了才支援手機鎖屏／後台繼續播放）'],
+    ['vapid', '推播 VAPID 公鑰（Firebase → 專案設定 → Cloud Messaging → 網路推送憑證 → 產生金鑰對）'],
     ['site', '本網站完整網址（例：https://xxx.github.io/repo/）'], ['title', '說明會名稱'], ['cc', '電話國碼（馬來西亞=60）'],
     ['tz', '時區（email 提醒用，例：Asia/Kuala_Lumpur）'], ['slot_from', '可預約的起始整點（0–23）'], ['slot_to', '可預約的結束整點（0–23）']],
   txt: [['mail_subj', '【馬上觀看】Email 標題'], ['mail_body', '【馬上觀看】Email 內容（可用 {name} {title} {link}）', 1],
@@ -393,7 +484,8 @@ async function admin() {
     S = { cfg: Object.assign({}, m, { video: v.exists ? v.data().url : '' }), leaders: ls.docs.map(d => ({ id: d.id, ...d.data() })) };
     CFG = S.cfg; F = JSON.parse(CFG.fields); REGS = join(rs, ws);
     LN = {}; S.leaders.forEach(l => LN[l.code] = l.name);
-    drawAdmin();
+    REDRAW = drawAdmin; try { localStorage.role = 'admin'; } catch (e) {}
+    drawAdmin(); initPush('admin');
   });
 }
 function drawAdmin() {
@@ -414,10 +506,7 @@ function drawAdmin() {
       <small class="muted">${esc(l.id)}<br>報名鏈接：${site}?ref=${esc(l.code)}</small>
       <div class="btns"><button class="btn ghost sm" onclick="delL('${esc(l.id)}')">刪除</button></div></div>`).join('') +
       `<p class="muted center">發展者登入頁：${site}?dev</p>`,
-    reg: () => `<div class="stats"><div class="stat"><b>${REGS.length}</b><small>報名人數</small></div>
-      <div class="stat"><b>${REGS.filter(r => r.slot).length}</b><small>預約時段</small></div>
-      <div class="stat"><b>${REGS.filter(r => r.pct >= 90).length}</b><small>幾乎看完</small></div></div>` +
-      REGS.map(r => regRow(r, 1)).join('') + '<div id="det"></div>'
+    reg: () => pushCard('admin') + followPanel(1)
   }[T]();
   view(shell(`<div class="tabs">` + TABS.map(([k, n]) => `<button class="tab ${k === T ? 'on' : ''}" onclick="sw('${k}')">${n}</button>`).join('') + `</div>` + body, 1));
 }
@@ -451,23 +540,22 @@ async function delL(id) {
 }
 
 // ---------- 第三步：發展者跟進 ----------
+function drawDev() {
+  const lk = (CFG.site || base()) + '?ref=' + DL.code;
+  view(shell(`<section class="hero"><span class="pill">發展者後台</span><h1>${esc(DL.name)}</h1><p>你的專屬報名鏈接：</p>
+    <p><b style="word-break:break-all">${esc(lk)}</b></p>
+    <button class="btn gold sm" onclick="navigator.clipboard.writeText('${lk}');this.textContent='已複製 ✓'">複製鏈接</button></section>` + pushCard('leader') + followPanel(0), 1));
+}
 async function dev() {
   await authPage(async u => {
     if (!u) return loginCard('發展者', '請使用管理員為你登記的 Gmail 登入。');
     const ld = await db.doc('leaders/' + u.email.toLowerCase()).get();
     if (!ld.exists) return view(shell(`<div class="card"><h3>尚未獲得授權</h3><p class="muted">${esc(u.email)} 還不是發展者，請聯絡管理員加入。</p></div>`));
-    const L = ld.data(); LN = { '': L.name };
-    const [rs, ws] = await Promise.all([db.collection('regs').where('leader', '==', L.code).get(),
-      db.collection('watch').where('leader', '==', L.code).get()]);
-    REGS = join(rs, ws);
-    const lk = (CFG.site || base()) + '?ref=' + L.code;
-    view(shell(`<section class="hero"><span class="pill">發展者後台</span><h1>${esc(L.name)}</h1><p>你的專屬報名鏈接：</p>
-      <p><b style="word-break:break-all">${esc(lk)}</b></p>
-      <button class="btn sm" onclick="navigator.clipboard.writeText('${lk}');this.textContent='已複製 ✓'">複製鏈接</button></section>
-      <div class="stats"><div class="stat"><b>${REGS.length}</b><small>報名人數</small></div>
-      <div class="stat"><b>${REGS.filter(r => r.pct > 0).length}</b><small>已開始看</small></div>
-      <div class="stat"><b>${REGS.filter(r => r.pct >= 90).length}</b><small>幾乎看完</small></div></div>` +
-      REGS.map(r => regRow(r, 0)).join('') + '<div id="det"></div>', 1));
+    DL = ld.data(); LN = { '': DL.name };
+    const [rs, ws] = await Promise.all([db.collection('regs').where('leader', '==', DL.code).get(),
+      db.collection('watch').where('leader', '==', DL.code).get()]);
+    REGS = join(rs, ws); REDRAW = drawDev; try { localStorage.role = 'dev'; } catch (e) {}
+    drawDev(); initPush('leader');
   });
 }
 
@@ -480,7 +568,11 @@ async function dev() {
     else if (P.has('dev')) await dev();
     else if (P.has('w')) await watch();
     else if (P.has('ref')) await register();
-    else view(shell(`<section class="hero"><span class="pill">線上說明會</span><h1>${esc(CFG.title)}</h1><p>請使用邀請你的朋友提供的專屬鏈接報名。</p></section>`));
+    else {
+      let ro = ''; try { ro = localStorage.role || ''; } catch (e) {}
+      if (ro) location.replace(base() + '?' + ro);
+      else view(shell(`<section class="hero"><span class="pill">線上說明會</span><h1>${esc(CFG.title)}</h1><p>請使用邀請你的朋友提供的專屬鏈接報名。</p></section>`));
+    }
   } catch (e) { err(e); }
 })();
 </script>
